@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vishaka Bai — Computer Science Undergraduate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1420;
+    --panel:#161D2E;
+    --panel-2:#1C2440;
+    --line: rgba(232,234,240,0.10);
+    --text:#E8EAF0;
+    --muted:#8B93AB;
+    --teal:#4FD1C5;
+    --amber:#F0A868;
+    --teal-dim: rgba(79,209,197,0.14);
+    --amber-dim: rgba(240,168,104,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--teal-dim); color:var(--teal); }
+  a{color:inherit;}
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* Background grid texture */
+  .grid-bg{
+    position:fixed; inset:0; z-index:-1;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    opacity:0.5;
+  }
+
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 28px; }
+
+  /* NAV */
+  nav{
+    position:sticky; top:0; z-index:10;
+    backdrop-filter: blur(10px);
+    background:rgba(15,20,32,0.75);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; letter-spacing:0.01em; }
+  .brand span{ color:var(--teal); }
+  .navlinks{ display:flex; gap:28px; font-size:0.88rem; color:var(--muted); }
+  .navlinks a{ text-decoration:none; transition:color 0.2s; position:relative; }
+  .navlinks a:hover, .navlinks a:focus-visible{ color:var(--text); }
+  .navlinks a:focus-visible{ outline:2px solid var(--teal); outline-offset:4px; border-radius:2px; }
+
+  /* HERO */
+  header.hero{ padding:96px 0 72px; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--teal);
+    letter-spacing:0.08em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 12px var(--teal); }
+  h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:clamp(2.4rem, 5.5vw, 4rem); line-height:1.05; letter-spacing:-0.01em;
+    max-width:14ch;
+  }
+  h1 .accent{ color:var(--amber); }
+  .lede{ margin-top:22px; max-width:56ch; color:var(--muted); font-size:1.08rem; }
+  .hero-meta{ display:flex; flex-wrap:wrap; gap:18px 28px; margin-top:32px; font-size:0.88rem; color:var(--muted); }
+  .hero-meta a{ text-decoration:none; border-bottom:1px solid transparent; transition:border-color 0.2s, color 0.2s; }
+  .hero-meta a:hover{ color:var(--teal); border-color:var(--teal); }
+  .hero-meta span{ display:inline-flex; align-items:center; gap:8px; }
+
+  /* SCHEMA DIAGRAM (signature element) */
+  .schema{ margin-top:64px; }
+  .schema svg{ width:100%; height:auto; display:block; }
+  .node-label{ font-family:'JetBrains Mono',monospace; font-size:12px; fill:var(--muted); }
+  .node-title{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; fill:var(--text); }
+  .node-rect{ fill:var(--panel); stroke:var(--line); stroke-width:1; }
+  .node-rect.core{ stroke:var(--teal); }
+  .edge{ stroke:var(--line); stroke-width:1.4; fill:none; }
+  .edge-dot{ fill:var(--amber); }
+
+  section{ padding:64px 0; border-top:1px solid var(--line); }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:36px; }
+  .sec-num{ font-family:'JetBrains Mono',monospace; color:var(--muted); font-size:0.82rem; }
+  h2{ font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:600; }
+
+  /* ABOUT */
+  .about-grid{ display:grid; grid-template-columns: 1.3fr 1fr; gap:48px; }
+  .about-grid p{ color:var(--muted); margin-bottom:14px; }
+  .about-grid p strong{ color:var(--text); font-weight:600; }
+  .fact-list{ list-style:none; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .fact-list li{ display:flex; justify-content:space-between; gap:12px; padding:14px 18px; font-size:0.9rem; }
+  .fact-list li:not(:last-child){ border-bottom:1px solid var(--line); }
+  .fact-list .k{ color:var(--muted); }
+  .fact-list .v{ font-family:'JetBrains Mono',monospace; text-align:right; color:var(--text); }
+
+  /* SKILLS */
+  .skill-cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .skill-col h3{ font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-size:0.82rem; padding:6px 12px; border-radius:20px;
+    border:1px solid var(--line); color:var(--muted); background:var(--panel);
+  }
+
+  /* PROJECTS */
+  .proj-list{ display:flex; flex-direction:column; }
+  .proj{
+    display:grid; grid-template-columns: 90px 1fr; gap:24px;
+    padding:28px 0; border-top:1px solid var(--line);
+  }
+  .proj:first-child{ border-top:none; padding-top:0; }
+  .proj-index{ font-family:'JetBrains Mono',monospace; color:var(--muted); font-size:0.82rem; padding-top:4px; }
+  .proj-title{ font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:600; margin-bottom:8px; }
+  .proj-stack{ font-family:'JetBrains Mono',monospace; font-size:0.76rem; color:var(--teal); margin-bottom:12px; display:block; }
+  .proj p{ color:var(--muted); font-size:0.94rem; margin-bottom:6px; max-width:64ch; }
+
+  /* EDUCATION */
+  .edu-card{
+    border:1px solid var(--line); border-radius:12px; padding:28px; background:var(--panel);
+    display:grid; grid-template-columns: 1fr auto; gap:16px; align-items:start;
+  }
+  .edu-card h3{ font-family:'Space Grotesk',sans-serif; font-size:1.15rem; margin-bottom:6px; }
+  .edu-card .campus{ color:var(--muted); font-size:0.9rem; margin-bottom:14px; }
+  .edu-card .gpa{ text-align:right; }
+  .edu-card .gpa .num{ font-family:'JetBrains Mono',monospace; font-size:1.6rem; color:var(--teal); }
+  .edu-card .gpa .label{ font-size:0.76rem; color:var(--muted); }
+  .coursework{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .status-pill{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--amber);
+    border:1px solid var(--amber-dim); background:var(--amber-dim); padding:6px 12px; border-radius:20px;
+  }
+
+  /* CONTACT / FOOTER */
+  footer{ padding:64px 0 48px; border-top:1px solid var(--line); }
+  .contact-row{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:24px; }
+  footer h2{ max-width:16ch; }
+  .contact-links{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+  .contact-links a{ text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.92rem; color:var(--muted); transition:color 0.2s; }
+  .contact-links a:hover{ color:var(--teal); }
+  .fine{ margin-top:56px; text-align:center; color:var(--muted); font-size:0.78rem; }
+
+  @media (max-width: 760px){
+    .about-grid{ grid-template-columns:1fr; }
+    .skill-cols{ grid-template-columns:1fr; }
+    .navlinks{ display:none; }
+    .proj{ grid-template-columns:1fr; }
+    .edu-card{ grid-template-columns:1fr; }
+    .edu-card .gpa{ text-align:left; }
+    .contact-row{ flex-direction:column; align-items:flex-start; }
+    .contact-links{ align-items:flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">VISHAKA<span>.</span>BAI</div>
+    <div class="navlinks">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Karachi, Pakistan · Available for internships</div>
+    <h1>Building systems across the <span class="accent">full stack</span>, one schema at a time.</h1>
+    <p class="lede">Computer Science undergraduate entering the 7th semester, with hands-on experience across web, mobile, and relational database systems — now extending that foundation into AI engineering.</p>
+    <div class="hero-meta">
+      <span>📍 Clifton, Karachi</span>
+      <span>✉️ <a href="mailto:khatrivishaka192@gmail.com">khatrivishaka192@gmail.com</a></span>
+      <span>📞 0322 0134064</span>
+      <span>💻 <a href="https://github.com/khatrivishaka192" target="_blank" rel="noopener">github.com/khatrivishaka192</a></span>
+    </div>
+
+    <div class="schema">
+      <svg viewBox="0 0 960 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram connecting Web, Mobile, Database, and AI Engineering domains around a central Vishaka Bai node">
+        <!-- edges -->
+        <path class="edge" d="M480,130 C400,90 260,70 170,60"/>
+        <path class="edge" d="M480,130 C420,60 620,40 790,55"/>
+        <path class="edge" d="M480,130 C400,180 260,190 165,205"/>
+        <path class="edge" d="M480,130 C420,190 620,210 795,205"/>
+        <circle class="edge-dot" cx="325" cy="88" r="2.5"/>
+        <circle class="edge-dot" cx="600" cy="58" r="2.5"/>
+        <circle class="edge-dot" cx="320" cy="175" r="2.5"/>
+        <circle class="edge-dot" cx="605" cy="195" r="2.5"/>
+
+        <!-- center node -->
+        <rect class="node-rect core" x="405" y="105" width="150" height="50" rx="8"/>
+        <text class="node-title" x="480" y="126" text-anchor="middle">Vishaka Bai</text>
+        <text class="node-label" x="480" y="144" text-anchor="middle">core.dev</text>
+
+        <!-- Web -->
+        <rect class="node-rect" x="30" y="34" width="140" height="50" rx="8"/>
+        <text class="node-title" x="100" y="56" text-anchor="middle">Web</text>
+        <text class="node-label" x="100" y="74" text-anchor="middle">PHP · Laravel · JS</text>
+
+        <!-- Mobile -->
+        <rect class="node-rect" x="790" y="24" width="140" height="50" rx="8"/>
+        <text class="node-title" x="860" y="46" text-anchor="middle">Mobile</text>
+        <text class="node-label" x="860" y="64" text-anchor="middle">React Native</text>
+
+        <!-- Database -->
+        <rect class="node-rect" x="25" y="180" width="140" height="50" rx="8"/>
+        <text class="node-title" x="95" y="202" text-anchor="middle">Databases</text>
+        <text class="node-label" x="95" y="220" text-anchor="middle">PostgreSQL · MySQL</text>
+
+        <!-- AI -->
+        <rect class="node-rect" x="795" y="180" width="140" height="50" rx="8"/>
+        <text class="node-title" x="865" y="202" text-anchor="middle">AI Engineering</text>
+        <text class="node-label" x="865" y="220" text-anchor="middle">Python · Scikit-Learn</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2>About</h2></div>
+    <div class="about-grid">
+      <div>
+        <p>Vishaka is a <strong>Computer Science undergraduate at SZABIST, Karachi</strong>, currently entering her 7th semester after completing 6th-semester finals. Her coursework and project work span the full stack — from relational database design to cross-platform mobile apps.</p>
+        <p>She's <strong>actively advancing into AI engineering</strong> through a specialized course, and is learning <strong>React Native</strong> to build more scalable, intelligent software. Across her project history, she has worked both independently and within agile teams to ship complete, end-to-end applications.</p>
+      </div>
+      <ul class="fact-list">
+        <li><span class="k">Institution</span><span class="v">SZABIST Karachi</span></li>
+        <li><span class="k">Degree</span><span class="v">BS Computer Science</span></li>
+        <li><span class="k">Timeline</span><span class="v">2023 – 2027</span></li>
+        <li><span class="k">CGPA</span><span class="v">3.26 / 4.0</span></li>
+        <li><span class="k">Status</span><span class="v">7th Semester</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">02</span><h2>Skills</h2></div>
+    <div class="skill-cols">
+      <div class="skill-col">
+        <h3>Languages &amp; Frameworks</h3>
+        <div class="chip-row">
+          <span class="chip">Java</span>
+          <span class="chip">C</span>
+          <span class="chip">HTML &amp; CSS</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">PHP / Laravel</span>
+          <span class="chip">React Native</span>
+        </div>
+      </div>
+      <div class="skill-col">
+        <h3>Databases &amp; Tools</h3>
+        <div class="chip-row">
+          <span class="chip">PostgreSQL</span>
+          <span class="chip">MySQL</span>
+          <span class="chip">MongoDB</span>
+          <span class="chip">Git / GitHub</span>
+        </div>
+      </div>
+      <div class="skill-col">
+        <h3>Core Competencies</h3>
+        <div class="chip-row">
+          <span class="chip">OOP</span>
+          <span class="chip">Data Structures &amp; Algorithms</span>
+          <span class="chip">Relational Databases</span>
+          <span class="chip">AI Engineering Foundations</span>
+          <span class="chip">Team Leadership</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">03</span><h2>Projects</h2></div>
+    <div class="proj-list">
+      <div class="proj">
+        <div class="proj-index mono">01</div>
+        <div>
+          <div class="proj-title">AI-Based Career Prediction Web App</div>
+          <span class="proj-stack mono">Python · Scikit-Learn · Web Framework</span>
+          <p>An intelligent web platform that predicts optimal career pathways by evaluating a user's skills, interests, and academic background.</p>
+          <p>Uses machine learning classification to map user profiles against evolving industry roles and job requirements.</p>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="proj-index mono">02</div>
+        <div>
+          <div class="proj-title">Home Service Booking App</div>
+          <span class="proj-stack mono">React Native</span>
+          <p>A cross-platform mobile app for booking home services, built collaboratively within an agile team.</p>
+          <p>Modular, component-based architecture for fluid, responsive UI across platforms.</p>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="proj-index mono">03</div>
+        <div>
+          <div class="proj-title">Cake Bliss Bakery Website</div>
+          <span class="proj-stack mono">PHP · Laravel · MySQL</span>
+          <p>A complete dynamic e-commerce bakery system with visual product catalogs and automated order management.</p>
+          <p>Includes an administrative control panel backed by a structured MySQL database for secure inventory control.</p>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="proj-index mono">04</div>
+        <div>
+          <div class="proj-title">Event Management System</div>
+          <span class="proj-stack mono">HTML · CSS · JavaScript · MongoDB</span>
+          <p>A team-built event orchestration platform focused on user-centric UI/UX workflow.</p>
+          <p>Core event registration flows integrated with a schema-flexible MongoDB backend.</p>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="proj-index mono">05</div>
+        <div>
+          <div class="proj-title">School &amp; Hospital Management Systems</div>
+          <span class="proj-stack mono">Java · NetBeans GUI · Advanced DSA</span>
+          <p>A NetBeans Java GUI application with secure user authentication, record tracking, and report generation.</p>
+          <p>Resource-allocation algorithms built on foundational data structures to optimize hospital patient scheduling.</p>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="proj-index mono">06</div>
+        <div>
+          <div class="proj-title">Relational Database Systems Programs</div>
+          <span class="proj-stack mono">PostgreSQL · C</span>
+          <p>A student record database in PostgreSQL with complex query logic to calculate aggregate course GPAs.</p>
+          <p>An isolated ATM emulator in C with multi-step ledger tracking, validation loops, and secure PIN handling.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">04</span><h2>Education</h2></div>
+    <div class="edu-card">
+      <div>
+        <h3>Bachelor of Computer Science</h3>
+        <div class="campus">Shaheed Zulfikar Ali Bhutto Institute of Science and Technology (SZABIST), Karachi Campus · 2023 – 2027</div>
+        <div class="coursework">
+          <span class="chip">OOP</span>
+          <span class="chip">DSA</span>
+          <span class="chip">Relational Databases (DBMS)</span>
+          <span class="chip">Software Development (SCD)</span>
+          <span class="chip">Operating Systems</span>
+          <span class="chip">Artificial Intelligence</span>
+          <span class="chip">Hybrid Mobile App Development</span>
+          <span class="chip">Google AI Essentials</span>
+        </div>
+        <div class="status-pill">6th semester finals completed → entering 7th semester</div>
+      </div>
+      <div class="gpa">
+        <div class="num">3.26</div>
+        <div class="label">CGPA / 4.0</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="contact-row">
+      <h2>Let's build something together.</h2>
+      <div class="contact-links">
+        <a href="mailto:khatrivishaka192@gmail.com">khatrivishaka192@gmail.com</a>
+        <a href="tel:03220134064">0322 0134064</a>
+        <a href="https://github.com/khatrivishaka192" target="_blank" rel="noopener">github.com/khatrivishaka192</a>
+      </div>
+    </div>
+    <div class="fine">Karachi, Clifton, Pakistan</div>
+  </div>
+</footer>
+
+</body>
+</html>
